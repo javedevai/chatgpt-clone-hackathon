@@ -51,7 +51,7 @@ export default function Home() {
     if (savedHistory) {
       try {
         setHistory(JSON.parse(savedHistory));
-      } catch {}
+      } catch (e) {}
     }
     if (savedModel) setModel(savedModel);
     if (savedPrompt) setSystemPrompt(savedPrompt);
