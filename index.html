@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Clone</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for code highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gray: {
+                            750: '#2d2d3a', // Custom dark gray for chat bubbles
+                            800: '#343541', // Original ChatGPT background
+                            850: '#2A2B32', // Sidebar background
+                            900: '#202123', // Darker background
+                            950: '#0f0f12', // Almost black
+                        }
+                    },
+                    animation: {
+                        'typing': 'blink 1s step-end infinite',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-800 text-gray-100 font-sans antialiased h-screen flex overflow-hidden">
+
+    <!-- Mobile Menu Button (Visible only on small screens) -->
+    <button id="mobile-menu-btn" class="md:hidden absolute top-4 left-4 z-50 text-white p-2 rounded-md hover:bg-gray-700">
+        <i class="ph ph-list text-2xl"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-gray-900 w-[260px] flex-shrink-0 flex flex-col h-full transform transition-transform duration-300 absolute md:relative z-40 -translate-x-full md:translate-x-0 border-r border-white/10 md:border-none">
+        <!-- New Chat Button -->
+        <div class="p-3 mb-1">
+            <button id="new-chat-btn" class="flex items-center gap-3 w-full px-3 py-3 border border-white/20 rounded-md hover:bg-white/5 transition-colors text-sm text-white text-left">
+                <i class="ph ph-plus text-lg"></i>
+                <span class="flex-1">New chat</span>
+            </button>
+        </div>
+
+        <!-- History List -->
+        <div class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar px-3 pb-2" id="history-container">
+            <div class="text-xs font-medium text-gray-500 py-3 px-2">Today</div>
+            <!-- History items will be injected here -->
+            <button class="flex items-center gap-3 w-full px-3 py-3 rounded-md hover:bg-gray-800 transition-colors text-sm text-gray-100 text-left group">
+                <i class="ph ph-chat-teardrop text-lg text-gray-400"></i>
+                <div class="flex-1 overflow-hidden whitespace-nowrap text-ellipsis relative text-gray-300 group-hover:text-white">
+                    Explain Quantum Physics
+                    <div class="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-gray-900 to-transparent group-hover:from-gray-800"></div>
+                </div>
+            </button>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="border-t border-white/20 p-3 bg-gray-900">
+            <button id="clear-chat-btn" class="flex items-center gap-3 w-full px-3 py-3 rounded-md hover:bg-gray-800 transition-colors text-sm text-white mb-1">
+                <i class="ph ph-trash text-lg"></i>
+                <span>Clear conversations</span>
+            </button>
+            <button id="settings-btn" class="flex items-center gap-3 w-full px-3 py-3 rounded-md hover:bg-gray-800 transition-colors text-sm text-white">
+                <i class="ph ph-gear text-lg"></i>
+                <span>Settings</span>
+            </button>
+             <button id="theme-btn" class="flex items-center gap-3 w-full px-3 py-3 rounded-md hover:bg-gray-800 transition-colors text-sm text-white">
+                <i class="ph ph-moon text-lg"></i>
+                <span>Dark Mode</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full relative">
+        <!-- Overlay for mobile sidebar -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-gray-600/50 z-30 hidden md:hidden glass"></div>
+
+        <!-- Model Selector (Top Bar) -->
+        <div class="h-14 flex items-center justify-center border-b border-white/10 bg-gray-800 z-10 sticky top-0 md:hidden">
+            <span class="text-gray-300 font-medium">Gemini 1.5 Flash</span>
+        </div>
+        
+        <!-- Desktop Model Selector -->
+        <div class="hidden md:flex absolute top-0 left-0 right-0 p-4 justify-center z-10 pointer-events-none">
+             <div class="bg-gray-900/90 backdrop-blur-sm rounded-lg p-1 flex items-center pointer-events-auto border border-white/10">
+                <button class="flex items-center gap-2 px-4 py-2 bg-gray-700/50 rounded text-sm text-white font-medium hover:bg-gray-700 transition">
+                    <i class="ph ph-lightning text-yellow-400"></i>
+                    Gemini 1.5 Flash
+                </button>
+             </div>
+        </div>
+
+
+        <!-- Chat Area -->
+        <div id="chat-container" class="flex-1 overflow-y-auto w-full scroll-smooth relative">
+            <!-- Empty State / Welcome Screen -->
+            <div id="welcome-screen" class="h-full flex flex-col items-center justify-center p-8 text-center">
+                <div class="bg-gray-700 rounded-full p-4 mb-6">
+                    <i class="ph ph-robot text-4xl text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-8 text-white">How can I help you today?</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl px-4">
+                    <button class="p-4 bg-gray-700/30 border border-white/10 rounded-xl hover:bg-gray-700/50 text-left transition text-sm">
+                        <h3 class="font-bold mb-1 text-gray-200">Explain quantum computing</h3>
+                        <p class="text-gray-400">in simple terms</p>
+                    </button>
+                    <button class="p-4 bg-gray-700/30 border border-white/10 rounded-xl hover:bg-gray-700/50 text-left transition text-sm">
+                        <h3 class="font-bold mb-1 text-gray-200">Got any creative ideas</h3>
+                        <p class="text-gray-400">for a 10 year old's birthday?</p>
+                    </button>
+                    <button class="p-4 bg-gray-700/30 border border-white/10 rounded-xl hover:bg-gray-700/50 text-left transition text-sm">
+                        <h3 class="font-bold mb-1 text-gray-200">How do I make an HTTP request</h3>
+                        <p class="text-gray-400">in Javascript?</p>
+                    </button>
+                     <button class="p-4 bg-gray-700/30 border border-white/10 rounded-xl hover:bg-gray-700/50 text-left transition text-sm">
+                        <h3 class="font-bold mb-1 text-gray-200">Write a python script</h3>
+                        <p class="text-gray-400">to automate sending daily emails</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages will be injected here -->
+            <div id="messages-list" class="flex flex-col w-full pb-32 pt-20">
+                <!-- User Message -->
+                <!-- <div class="w-full text-gray-100 border-b border-black/10 dark:border-gray-900/50 bg-gray-800 dark:bg-[#444654]">
+                    <div class="flex p-4 gap-4 text-base md:gap-6 md:max-w-2xl lg:max-w-[38rem] xl:max-w-3xl md:py-6 lg:px-0 m-auto">
+                        <div class="flex-shrink-0 flex flex-col relative items-end">
+                            <div class="w-[30px] flex flex-col relative items-end">
+                                <div class="relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center bg-green-500">
+                                    <i class="ph ph-user text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative flex-1 overflow-hidden">
+                            <div class="m-0">What is the capital of France?</div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- AI Message -->
+                <!-- <div class="w-full text-gray-100 border-b border-black/10 dark:border-gray-900/50 bg-[#444654] dark:bg-[#444654]">
+                    <div class="flex p-4 gap-4 text-base md:gap-6 md:max-w-2xl lg:max-w-[38rem] xl:max-w-3xl md:py-6 lg:px-0 m-auto">
+                        <div class="flex-shrink-0 flex flex-col relative items-end">
+                            <div class="w-[30px] flex flex-col relative items-end">
+                                <div class="relative h-[30px] w-[30px] p-1 rounded-sm text-white flex items-center justify-center bg-teal-500">
+                                    <i class="ph ph-robot text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative flex-1 overflow-hidden">
+                            <div class="markdown-content">
+                                <p>The capital of France is Paris.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="absolute bottom-0 left-0 w-full border-t border-white/20 bg-gray-800 pt-2 pb-4 from-gray-800 via-gray-800 to-transparent bg-gradient-to-t">
+            <div class="stretch mx-2 flex flex-col gap-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
+                <div class="relative flex h-full flex-1 items-stretch md:flex-col">
+                    <div class="relative flex w-full flex-grow p-4 bg-[#40414F] rounded-xl shadow-xs border border-black/10 dark:border-gray-900/50">
+                        <textarea id="message-input" rows="1" placeholder="Send a message..." class="m-0 w-full resize-none border-0 bg-transparent p-0 pl-2 pr-10 text-white focus:ring-0 focus-visible:ring-0 outline-none overflow-y-hidden max-h-52" style="height: 24px;"></textarea>
+                        <button id="send-btn" class="absolute p-1 rounded-md text-gray-400 bottom-3 right-3 hover:bg-gray-900 disabled:opacity-40 disabled:hover:bg-transparent transition-colors" disabled>
+                            <i class="ph ph-paper-plane-right text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="px-2 pb-2 text-center text-xs text-gray-400 md:px-[60px]">
+                    <span>Clone produced for Saylani Hackathon. Free Research Preview.</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center">
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-white/10 shadow-2xl transform transition-all scale-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white">Settings</h3>
+                <button id="close-settings-btn" class="text-gray-400 hover:text-white">
+                    <i class="ph ph-x text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Gemini API Key (Local Testing Only)</label>
+                <input type="password" id="api-key-input" class="w-full bg-gray-700/50 border border-white/10 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500/50" placeholder="AIzaSy...">
+                <p class="text-[10px] text-gray-500 mt-2">Required for 'Live Server'. Not needed on Vercel.</p>
+            </div>
+
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Model ID</label>
+                <input type="text" id="model-id-input" class="w-full bg-gray-700/50 border border-white/10 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500/50" placeholder="gemini-1.5-flash">
+                <p class="text-[10px] text-gray-500 mt-2">Try 'gemini-1.5-flash', 'gemini-1.5-pro', or 'gemini-1.5-flash-latest' if one fails.</p>
+            </div>
+
+            <div class="mb-5">
+                 <label class="block text-sm font-medium text-gray-300 mb-2">System Prompt</label>
+                 <textarea id="system-prompt-input" rows="3" class="w-full bg-gray-700/50 border border-white/10 rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500/50" placeholder="You are a helpful assistant."></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button id="save-settings-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors font-medium">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
