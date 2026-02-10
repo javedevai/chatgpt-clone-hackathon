@@ -2,7 +2,6 @@
   "name": "chatgpt-clone",
   "version": "1.0.0",
   "description": "ChatGPT Clone with Gemini AI",
-  "type": "module",
   "main": "script.js",
   "scripts": {
     "dev": "vercel dev",
