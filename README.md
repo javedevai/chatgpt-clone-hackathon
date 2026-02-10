@@ -1,52 +1,92 @@
-# ChatGPT Clone — Saylani Hackathon
+# 🚀 ChatGPT Clone — AI Assistant
 
-A pixel-perfect ChatGPT clone built with **HTML**, **Tailwind CSS**, and **Vanilla JavaScript**, powered by the **Google Gemini API**.
+A premium ChatGPT-like AI assistant built with **Next.js**, **React**, and **Tailwind CSS**, powered by **Google Gemini AI**.
 
-## Features
+![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
+![React](https://img.shields.io/badge/React-18-blue?logo=react)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?logo=tailwind-css)
+![Gemini](https://img.shields.io/badge/Gemini-AI-green?logo=google)
 
-- 🎨 Pixel-perfect ChatGPT UI
-- 🌙 Dark/Light mode toggle
-- 💬 Chat history with localStorage
-- 🤖 AI responses via Google Gemini 1.5 Flash
-- 📱 Fully responsive design
-- 🔒 Secure API key handling (serverless proxy)
+## 🔗 Live Demo
 
-## Tech Stack
+👉 [**chatgpt-clone-hackathon.vercel.app**](https://chatgpt-clone-hackathon.vercel.app)
 
-- HTML5, Vanilla JavaScript, Tailwind CSS (CDN)
-- Google Gemini API (via AI Studio)
-- Vercel Serverless Functions (for secure deployment)
+## ✨ Features
 
-## Local Development
+### Core
+- 💬 Real-time chat with Google Gemini AI
+- 🎨 Premium dark-mode ChatGPT-like UI
+- 📱 Fully responsive (mobile + desktop)
+- ⚡ Fast responses with Next.js API routes
+- 💅 Glassmorphism design with smooth animations
 
-1. Clone the repo
-2. Create a `.env` file and add your key:
-   ```env
-   GEMINI_API_KEY=your_key_here
-   ```
-3. Since this app uses a backend proxy for security, local development requires the **Vercel CLI** to run the serverless function:
+### Bonus Features
+- 🔄 **Multiple Model Selection** — Switch between Gemini models
+- 🧠 **Conversation Memory** — Chat history persists in localStorage
+- 🎛️ **System Prompt Customization** — Configure AI behavior
+- ⏱️ **Message Timestamps** — Track when messages were sent
+- 📝 **Markdown Rendering** — Code blocks, lists, tables, and more
+- 🎯 **Auto-scroll** — Automatically scrolls to the latest message
+- 🔒 **Secure** — API key stored server-side, never exposed to client
+
+## 🛠️ Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| Next.js 14 | React framework with API routes |
+| React 18 | UI component library |
+| Tailwind CSS | Utility-first styling |
+| Google Gemini API | AI language model |
+| Vercel | Deployment platform |
+
+## 📁 Project Structure
+
+```
+src/
+├── app/
+│   ├── api/chat/route.js    # Gemini API proxy
+│   ├── globals.css           # Global styles + animations
+│   ├── layout.js             # Root layout
+│   └── page.js               # Main chat page
+└── components/
+    ├── ChatArea.js            # Message list container
+    ├── ChatInput.js           # Input bar with send button
+    ├── MessageBubble.js       # Individual chat message
+    ├── SettingsModal.js       # Model & prompt settings
+    ├── Sidebar.js             # Chat history sidebar
+    └── TypingIndicator.js     # "AI is thinking" animation
+```
+
+## 🚀 Getting Started
+
+1. Clone the repository:
    ```bash
-   npm i -g vercel
-   vercel dev
+   git clone https://github.com/your-username/chatgpt-clone-hackathon.git
+   cd chatgpt-clone-hackathon
    ```
-4. Open `http://localhost:3000`
 
-## Secure Deployment (Vercel)
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-1. Push code to **GitHub** (The `.env` file is ignored and safe).
-2. Import the repo into **Vercel**.
-3. Go to **Settings → Environment Variables** and add `GEMINI_API_KEY`.
-4. The website will work immediately for all visitors without requiring them to enter a key.
+3. Create `.env.local` with your Gemini API key:
+   ```
+   GEMINI_API_KEY=your_api_key_here
+   ```
 
-## File Structure
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-```
-├── index.html        # Main UI
-├── style.css         # Custom styles & animations
-├── script.js         # Frontend logic (Gemini API integration)
-├── api/
-│   └── chat.js       # Serverless proxy (reads GEMINI_API_KEY from env)
-├── .env.example      # Environment variable template
-├── .gitignore        # Excludes .env from commits
-└── README.md         # This file
-```
+5. Open [http://localhost:3000](http://localhost:3000)
+
+## 📦 API Used
+
+- **Google Gemini API** (Free tier) via `generativelanguage.googleapis.com`
+- Default model: `gemini-2.0-flash`
+
+## 👨‍💻 Built for
+
+Saylani Mass IT Training — Web Development Hackathon (February 2026)

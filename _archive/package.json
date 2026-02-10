@@ -1,0 +1,13 @@
+{
+  "name": "chatgpt-clone",
+  "version": "1.0.0",
+  "description": "ChatGPT Clone with Gemini AI",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "latest"
+  }
+}
