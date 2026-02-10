@@ -220,7 +220,18 @@ async function fetchAIResponse(userMessage) {
             })
         });
 
-        if (response.status === 404) {
+        let errorMsg = 'Proxy Error';
+        let isProxyError = false;
+        
+        try {
+            const err = await response.json();
+            errorMsg = err.error || errorMsg;
+        } catch (e) {
+            // Could not parse JSON, likely a true 404 HTML page from Vercel
+            isProxyError = true;
+        }
+
+        if (response.status === 404 && isProxyError) {
              throw new Error("Proxy not found (404) on Vercel. Please check your Vercel deployment.");
         }
         
@@ -229,11 +240,6 @@ async function fetchAIResponse(userMessage) {
         }
 
         if (!response.ok) {
-            let errorMsg = 'Proxy Error';
-            try {
-                const err = await response.json();
-                errorMsg = err.error || errorMsg;
-            } catch (e) {}
             throw new Error(errorMsg);
         }
 
