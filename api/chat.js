@@ -11,7 +11,8 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { messages, systemPrompt } = req.body;
+    const { messages, systemPrompt, model } = req.body;
+    const modelId = model || 'gemini-1.5-flash';
 
     // Convert OpenAI-style messages to Gemini format
     const contents = messages
@@ -39,7 +40,7 @@ module.exports = async (req, res) => {
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -216,7 +216,8 @@ async function fetchAIResponse(userMessage) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 messages: apiMessages,
-                systemPrompt: state.systemPrompt
+                systemPrompt: state.systemPrompt,
+                model: state.modelId // Pass selected model to backend
             })
         });
 
