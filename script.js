@@ -228,8 +228,12 @@ async function fetchAIResponse(userMessage) {
             })
         });
 
-        if (response.status === 404 || response.status === 405) {
-            throw new Error("Proxy not found. Local development with 'Live Server' requires a manual API key in Settings.");
+        if (response.status === 404) {
+             throw new Error("Proxy not found (404). If on Vercel, ensure 'vercel.json' is present. If local, use 'Live Server' + Settings API Key.");
+        }
+        
+        if (response.status === 405) {
+             throw new Error("Method Not Allowed (405). Ensure the request is POST.");
         }
 
         if (!response.ok) {
