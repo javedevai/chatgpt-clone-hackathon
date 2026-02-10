@@ -23,7 +23,7 @@ const sidebarOverlay = document.getElementById('sidebar-overlay');
 let state = {
     apiKey: localStorage.getItem('gemini_api_key') || '',
     systemPrompt: localStorage.getItem('system_prompt') || 'You are a helpful AI assistant.',
-    modelId: localStorage.getItem('gemini_model_id') || 'gemini-1.5-flash', // Added
+    modelId: localStorage.getItem('gemini_model_id') || 'gemini-1.5-flash-latest', // Updated default
     history: JSON.parse(localStorage.getItem('chat_history')) || [],
     currentChatId: null,
     isGenerating: false,
